@@ -2,6 +2,7 @@
 
 <head>
     <script src="target/teavm/classes.js"></script>
+    <script src="target/teavm/classes.wasm-runtime.js"></script>
 </head>
 
 <style>
@@ -44,7 +45,8 @@
     .highlight-row-bottom td {
         border-bottom: 2px solid rgb(104, 104, 104);
     }
-     .highlight-row-bottom th {
+
+    .highlight-row-bottom th {
         border-bottom: 2px solid rgb(104, 104, 104);
     }
 
@@ -52,20 +54,60 @@
         border-top: 2px solid rgb(104, 104, 104);
     }
 
-    .x{
-         border-bottom: 2px solid rgb(104, 104, 104);
+    .x {
+        border-bottom: 2px solid rgb(104, 104, 104);
     }
 
-    .right-border{
-         border-right: 2px solid rgb(104, 104, 104);
+    .right-border {
+        border-right: 2px solid rgb(104, 104, 104);
     }
 
-    .col{
+    .col {
         width: 150px;
     }
 </style>
 
 <body>
+    <script>
+        let teavmInstance = null;
+        const WASM_PATH = 'target/teavm/classes.wasm';
+
+        // 1. Hauptfunktion zum Laden des WASM-Moduls
+        async function loadWasm() {
+            try {
+
+                teavmInstance = await TeaVM.wasm.load(WASM_PATH);
+
+                if (teavmInstance.instance.exports.initializeApp) {
+                    teavmInstance.instance.exports.initializeApp();
+                } else {
+                    console.error("initializeApp wurde nicht exportiert!");
+                }
+            } catch (error) {
+                console.error("Fehler beim Laden des WASM-Moduls:", error);
+                document.getElementById('output').textContent = "Laden fehlgeschlagen: " + error.message;
+            }
+        }
+
+        // 3. Funktion zum Aufruf der Additionsmethode
+        function start_wasm() {
+            if (!teavmInstance) {
+                alert("Error")
+                return;
+            }
+
+            const steps = parseInt(document.getElementById('daysInput').value);
+            const sims = parseInt(document.getElementById('simulations').value);
+            const sum = teavmInstance.instance.exports.doDynamicOptimisationWasm(steps, sims);
+
+            console.log(sum)
+        }
+
+        // Starten Sie den Ladevorgang, sobald das DOM bereit ist
+        document.addEventListener('DOMContentLoaded', loadWasm);
+    </script>
+
+
     <script>
         function start() {
             try {
@@ -80,10 +122,7 @@
             } catch {
                 document.getElementById("output").textContent = "An error occurred";
             }
-        }
-        function start_wasm() {
-            alert("Not yet implemented")
-        }
+        }       
     </script>
 
     <h1>Analysis of runtime</h2>
