@@ -1,63 +1,106 @@
 <!DOCTYPE html>
-<html lang="de">
+
 <head>
-    <meta charset="UTF-8">
-    <title>TeaVM WebAssembly Demo</title>
+    <script src="target/teavm/classes.js"></script>
 </head>
+
+<style>
+    body {
+        font-family: sans-serif;
+        line-height: 1.6;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .formula {
+        background: #f4f4f4;
+        padding: 15px;
+        border-left: 5px solid #333;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .line {
+        margin-top: 4px;
+        display: flex;
+    }
+
+    .line-header {
+        width: 200px;
+    }
+
+    .highlight {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+</style>
+
 <body>
-
-    <h1>WebAssembly (WASM) Demo mit Java/TeaVM</h1>
-    <p id="output">WASM wird geladen...</p>
-    
-    <button onclick="calculateSum()">Zahlen addieren (in WASM)</button>
-    <p id="result">Ergebnis:</p>
-
-    <script src="target/teavm/classes.wasm-runtime.js"></script> 
-
     <script>
-        let teavmInstance = null;
-        const WASM_PATH = 'target/teavm/classes.wasm';
-
-        // 1. Hauptfunktion zum Laden des WASM-Moduls
-        async function loadWasm() {
+        function start() {
             try {
-                // Laden des WASM-Moduls mithilfe des TeaVM-Loaders
-                teavmInstance = await TeaVM.wasm.load(WASM_PATH);
-                
-                // 2. Aufruf der initialisierenden Export-Methode
-                // Diese Methode enthält den @JSBody-Code, der das DOM aktualisiert.
-                console.log(teavmInstance.instance.exports)
-                if (teavmInstance.instance.exports.initializeApp) {
-                    teavmInstance.instance.exports.initializeApp();
-                } else {
-                    console.error("initializeApp wurde nicht exportiert!");
-                }
-            } catch (error) {
-                console.error("Fehler beim Laden des WASM-Moduls:", error);
-                document.getElementById('output').textContent = "Laden fehlgeschlagen: " + error.message;
+                document.getElementById("output").textContent = "Running ..."
+                main();
+                const steps = parseInt(document.getElementById('daysInput').value);
+                const sims = parseInt(document.getElementById('simulations').value);
+
+                const sum = doDynamicOptimisation(steps, sims);
+                const resultText = "Job done in " + sum / 1000 + " seconds";
+                document.getElementById("output").textContent = resultText;
+            } catch {
+                document.getElementById("output").textContent = "An error occurred";
             }
         }
-
-        // 3. Funktion zum Aufruf der Additionsmethode
-        function calculateSum() {
-            if (!teavmInstance) {
-                document.getElementById('result').textContent = 'WASM ist noch nicht geladen.';
-                return;
-            }
-            
-            const numA = 42;
-            const numB = 17;
-            
-            // Aufruf der Java-Methode, die in WASM kompiliert wurde
-            // Der Name (addNumbers) entspricht dem @Export(name = "...") in Ihrer Java-Klasse
-            const sum = teavmInstance.instance.exports.addNumbers(numA, numB);
-            
-            document.getElementById('result').textContent = `Ergebnis von ${numA} + ${numB} (aus WASM): ${sum}`;
-        }
-
-        // Starten Sie den Ladevorgang, sobald das DOM bereit ist
-        document.addEventListener('DOMContentLoaded', loadWasm);
     </script>
 
+    <h1>Analysis of runtime</h2>
+        <p>
+            To check the runtime of a java program which was transpiled to wasm/js using teavm i created a small
+            montecarlo simulation + dynamic optimization problem.
+            Input parameter: simulations and time steps
+            The states are fixed to 3 states.
+            The different states are defined as:
+        <div class="formula">
+            <div> I - (P1-P2)*0.904 - 45</div>
+            <div>II - (P1-P2)*0.75 - 37</div>
+            <div>III - (P1-P2)*0.6 - 30</div>
+        </div>
+        P1 and P2 are simulated values:
+        <div class="formula">
+            <p>
+                <i>P</i>(<i>x</i>) =
+                (1 / &sigma;&radic;2&pi;)
+                <i>e</i><sup>-&frac12;((<i>x</i>-&mu;)/&sigma;)<sup>2</sup></sup>
+            <div>with:
+                <div>
+                    &sigma; = [4,2]
+                </div>
+                <div>
+                    &mu; = [100,50]
+                </div>
+            </div>
+            </p>
+        </div>
+        </p>
+
+        <h3>Parameter</h3>
+        <div class="line">
+            <div class="line-header">timesteps:</div>
+            <input type="number" id="daysInput" value="365">
+        </div>
+        <div class="line">
+            <div class="line-header">Simulations:</div>
+            <input type="number" id="simulations" value="1000">
+        </div>
+
+        <button onclick="start()">Do Simulation+Optimization</button>
+
+
+        <div style="margin-top: 20px;">
+            <strong>Result:</strong> <span id="output">No calculation yet</span>
+        </div>
+
 </body>
+
 </html>

@@ -26,7 +26,7 @@
                         <phase>process-classes</phase>
                         <configuration>
                             <mainClass>ipbhalle.de.webassemblydemo.WebAssemblyDemo</mainClass>
-                            <targetType>WEBASSEMBLY</targetType>
+                            <targetType>JAVASCRIPT</targetType>
                             <targetDirectory>${project.build.directory}/teavm</targetDirectory>
                         </configuration>
                     </execution>
