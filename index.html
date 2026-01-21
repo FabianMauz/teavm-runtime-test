@@ -40,6 +40,7 @@
         border-collapse: collapse;
         width: 100%;
         text-align: center;
+        margin: 10px;
     }
 
     .highlight-row-bottom td {
@@ -63,7 +64,7 @@
     }
 
     .col {
-        width: 150px;
+        width: 160;
     }
 </style>
 
@@ -84,8 +85,7 @@
                     console.error("initializeApp wurde nicht exportiert!");
                 }
             } catch (error) {
-                console.error("Fehler beim Laden des WASM-Moduls:", error);
-                document.getElementById('output').textContent = "Laden fehlgeschlagen: " + error.message;
+                console.error("Fehler beim Laden des WASM-Moduls:", error);              
             }
         }
 
@@ -98,6 +98,7 @@
 
             const steps = parseInt(document.getElementById('daysInput').value);
             const sims = parseInt(document.getElementById('simulations').value);
+
             const sum = teavmInstance.instance.exports.doDynamicOptimisationWasm(steps, sims);
 
             console.log(sum)
@@ -195,7 +196,7 @@
                 <td>0.925</td>
                 <td>2.262</td>
                 <td>4.200</td>
-                <td>out of memory</td>
+                <td>out of mem</td>
             </tr>
             <tr>
                 <th class="right-border">js</th>
@@ -203,20 +204,22 @@
                 <td>1.838</td>
                 <td>3.689</td>
                 <td>9.798</td>
-                <td>out of memory</td>
-                <td>out of memory</td>
+                <td>out of mem</td>
+                <td>out of mem</td>
             </tr>
             <tr>
-                <th class="right-border">wasm</th>
-                <td>to do</td>
-                <td>to do</td>
-                <td>to do</td>
-                <td>to do</td>
-                <td>to do</td>
-                <td>to do</td>
+                <th class="right-border">wasm *</th>
+                <td>out of mem</td>
+                <td>out of mem</td>
+                <td>out of mem</td>
+                <td>out of mem</td>
+                <td>out of mem</td>
+                <td>out of mem</td>
             </tr>
-
         </table>
+
+        * The current implementation relies heavy on multi dimensional arrays  like float [][][]. WASM is very picky smicky
+        dealing with them. A way to handle this is transforming them into a one dimesional array.
 </body>
 
 </html>
