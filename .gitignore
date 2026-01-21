@@ -1,4 +1,4 @@
-target/
+/target/*
 !/target/teavm/classes.js
 pom.xml.tag
 pom.xml.releaseBackup
