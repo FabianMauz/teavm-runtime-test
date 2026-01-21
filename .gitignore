@@ -1,5 +1,6 @@
 /target/*
 !/target/teavm/classes.js
+!/target/teavm/classes.wasm
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
