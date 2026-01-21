@@ -34,6 +34,35 @@
         font-weight: bold;
         color: #2c3e50;
     }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        text-align: center;
+    }
+
+    .highlight-row-bottom td {
+        border-bottom: 2px solid rgb(104, 104, 104);
+    }
+     .highlight-row-bottom th {
+        border-bottom: 2px solid rgb(104, 104, 104);
+    }
+
+    .highlight-row-top th {
+        border-top: 2px solid rgb(104, 104, 104);
+    }
+
+    .x{
+         border-bottom: 2px solid rgb(104, 104, 104);
+    }
+
+    .right-border{
+         border-right: 2px solid rgb(104, 104, 104);
+    }
+
+    .col{
+        width: 150px;
+    }
 </style>
 
 <body>
@@ -52,11 +81,14 @@
                 document.getElementById("output").textContent = "An error occurred";
             }
         }
+        function start_wasm() {
+            alert("Not yet implemented")
+        }
     </script>
 
     <h1>Analysis of runtime</h2>
         <p>
-            To check the runtime of a java program which was transpiled to wasm/js using teavm i created a small
+            To check the runtime of a java program which was transpiled to wasm and js using teavm i created a small
             montecarlo simulation + dynamic optimization problem.
             Input parameter: simulations and time steps
             The states are fixed to 3 states.
@@ -94,13 +126,58 @@
             <input type="number" id="simulations" value="1000">
         </div>
 
-        <button onclick="start()">Do Simulation+Optimization</button>
+        <button onclick="start()">Do Simulation+Optimization with js</button>
+        <button onclick="start_wasm()">Do Simulation+Optimization with wasm</button>
 
 
         <div style="margin-top: 20px;">
             <strong>Result:</strong> <span id="output">No calculation yet</span>
         </div>
 
+        <h3>Previour results</h3>
+        <div>Some experiments have on my local machine has given me following results</div>
+        <table>
+            <tr class="highlight-row-top">
+                <th class="x" rowspan="2">Runtime in sec</th>
+                <th colspan="6">Simulations (with 365 time steps)</th>
+            </tr>
+            <tr class="highlight-row-bottom">
+                <td class="col">2500</td>
+                <td class="col">5000</td>
+                <td class="col">10_000</td>
+                <td class="col">25_000</td>
+                <td class="col">50_000</td>
+                <td class="col">100_000</td>
+            </tr>
+            <tr>
+                <th class="right-border">java</th>
+                <td>0.255</td>
+                <td>0.450</td>
+                <td>0.925</td>
+                <td>2.262</td>
+                <td>4.200</td>
+                <td>out of memory</td>
+            </tr>
+            <tr>
+                <th class="right-border">js</th>
+                <td>0.738</td>
+                <td>1.838</td>
+                <td>3.689</td>
+                <td>9.798</td>
+                <td>out of memory</td>
+                <td>out of memory</td>
+            </tr>
+            <tr>
+                <th class="right-border">wasm</th>
+                <td>to do</td>
+                <td>to do</td>
+                <td>to do</td>
+                <td>to do</td>
+                <td>to do</td>
+                <td>to do</td>
+            </tr>
+
+        </table>
 </body>
 
 </html>
